@@ -1,0 +1,69 @@
+# from urllib.request import HTTPPasswordMgrWithDefaultRealm, HTTPBasicAuthHandler, build_opener
+# from urllib.error import URLError
+#
+# if __name__ == '__main__':
+#
+#     # 登入身份认证
+#     username = 'admin'
+#     password = 'admin'
+#     url = 'http://ssr3.scrape.center/'
+#
+#     p = HTTPPasswordMgrWithDefaultRealm()
+#     p.add_password(None, url, username, password)
+#     auth_handler = HTTPBasicAuthHandler(p)
+#     opener = build_opener(auth_handler)
+#
+#     try:
+#         result = opener.open(url)
+#         html = result.read().decode('utf-8')
+#         print(html)
+#     except URLError as e:
+#         print(e.reason)
+
+
+# IP代理,首先需要在本地搭建一个HTTP代理，并让其运行在8080端口上
+# from urllib.error import URLError
+# from urllib.request import ProxyHandler, build_opener
+#
+# proxy_handler = ProxyHandler({
+#     'http': 'http://127.0.0.1:8080',
+#     'https': 'https://127.0.0.1:8080'
+# })
+# opener = build_opener(proxy_handler)
+# try:
+#     response = opener.open('http://www.baidu.com')
+#     print(response.read().decode('utf-8'))
+# except URLError as e:
+#     print(e.reason)
+
+
+# cookie
+# import http.cookiejar, urllib.request
+# cookie = http.cookiejar.CookieJar()
+# handle = urllib.request.HTTPCookieProcessor(cookie)
+# opener = urllib.request.build_opener(handle)
+# response = opener.open('http://www.baidu.com')
+# for item in cookie:
+#     print(item.name + "=" + item.value)
+
+# 将cookie生成文本保存至本地
+# import urllib.request, http.cookiejar
+#
+# filename = 'Cookie.txt'
+# cookie = http.cookiejar.MozillaCookieJar(filename)
+# 保存LWP格式的COOkie文件，可以在声明时就进行修改
+# cookie = http.cookiejar.LWPCookieJar(filename)
+# handle = urllib.request.HTTPCookieProcessor(cookie)
+# opener = urllib.request.build_opener(handle)
+# response = opener.open('http://www.baidu.com')
+# cookie.save(ignore_discard=True, ignore_expires=True)
+
+# 利用LWP格式的Cookie文件
+# import urllib.request, http.cookiejar
+#
+# cookie = http.cookiejar.LWPCookieJar()
+# cookie.load('cookie.txt', ignore_discard=True, ignore_expires=True)
+# handler = urllib.request.HTTPCookieProcessor(cookie)
+# opener = urllib.request.build_opener(handler)
+# response = opener.open('http://www.baidu.com')
+# print(response.read().decode('utf-8'))
