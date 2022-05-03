@@ -1,0 +1,79 @@
+# http/2.0协议的网址无法使用urllib和requests爬取
+# import requests
+# url = 'https://spa16.scrape.center/'
+# response = requests.get(url)
+# print(response.text)
+
+# httpx
+# import httpx
+# response = httpx.get('https://www.httpbin.org/get')
+# print(response.status_code)
+# print(response.headers)
+# print(response.text)
+
+# httpx-UserAgent
+# import httpx
+# headers = {
+#     'User-Agent':  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:99.0) Gecko/20100101 Firefox/99.0'
+# }
+# response = httpx.get('https://www.httpbin.org/get', headers=headers)
+# print(response.text)
+
+# 使用httpx爬取 https://spa16.scrape.center
+# import httpx
+# response = httpx.get('https://spa16.scrape.center')    # 错误的写法
+# print(response.text)
+
+import httpx
+client = httpx.Client(http2=True)
+response = client.get('https://spa16.scrape.center')
+print(response.text)
+
+# httpx对于get, post, put, delete请求实现方法与requests类似
+# import httpx
+# r = httpx.get('https://www.httpbin.org/get', params={'name': 'germey'})
+# r = httpx.post('https://www.httpbin.org/post', data={'name': 'germey'})
+# r = httpx.put('https://www.httpbin.org/put')
+# r = httpx.delete('https://www.httpbin.org/delete')
+# r = httpx.patch('https://www.httpbin.org/patch')
+
+
+# Client对象
+# import httpx
+with httpx.Client() as client:
+    response = client.get('https://www.httpbin.org/get')
+    print(response)
+# 等价于
+client = httpx.Client()
+try:
+    response = client.get('https://www.httpbin.org/get')
+finally:
+    client.close()
+
+
+# client 可以指定一些参数，例如headers
+# import httpx
+url = 'https://www.httpbin.org/headers'
+headers = {'User-Agent': 'my-app/0.0.1'}
+with httpx.Client(headers=headers) as client:
+    r = client.get(url)
+    print(r.json()['headers']['User-Agent'])
+
+# httpx默认支持http/1.0 ，HTTP/2.0需要在客户端上开启
+# import httpx
+client = httpx.Client(http2=True)
+response = client.get('https://www.httpbin.org/get')
+print(response.text)
+print(response.http_version)
+
+
+# 异步请求
+# import httpx
+import asyncio
+async def fetch(url):
+    async with httpx.AsyncClient(http2=True) as client:
+        response = await client.get(url)
+        print(response.text)
+
+if __name__ == '__main__':
+    asyncio.get_event_loop().run_until_complete(fetch('https://www.httpbin.org/get'))
