@@ -78,7 +78,7 @@ def parse_detail(html):
     # 名称
     name_pattern = re.compile('<h2.*?>(.*?)</h2>')
     # 类别
-    categories_pattern = re.compile('<button.*?category.*?<span>(.*?)</span>.*?</botton>', re.S)
+    categories_pattern = re.compile('<button.*?category.*?<span>(.*?)</span>.*?</button>', re.S)
     # 上映时间
     published_at_pattern = re.compile('(\d{4}-\d{2}-\d{2}\s?上映)')
     # 评分
