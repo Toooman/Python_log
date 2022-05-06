@@ -1,0 +1,507 @@
+html = """
+<html><head><title>The Dormouse's story</title></head>
+<body>
+<p class="title" name="dromouse"><b>The Dormouse's story</b></p>
+<p class="story">Once upon a time there weere three little sisters; and their names were
+<a href="http://example.com/elsie" class="sister" id="link"<!--Elsie--></a>'
+<a href="http://example.com/lacie" class="sister" id="link2">Lacie</a>and
+<a href="http:/example.com/tillit" class="sister" id="link3">Tillie     </a>
+and they lived at the bottom of a well.</p>
+<p class ="stroy">...<p>
+"""
+# 基本使用
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.prettify())
+print(soup.title.string)
+
+# 节点选择器
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.title)  # <title>The Dormouse's story</title>
+print(type(soup.title))  # <class 'bs4.element.Tag'>
+print(soup.title.string)  # The Dormouse's story
+print(soup.head)  # <head><title>The Dormouse's story</title></head>
+print(soup.p)  # <p class="title" name="dromouse"><b>The Dormouse's story</b></p>
+
+
+# 提取信息
+# >>获取名称
+print(soup.title.name)
+# >>获取属性
+print(soup.p.attrs)
+print(soup.p.attrs["name"])
+# >>获取内容
+print(soup.p.string)
+# >>嵌套选择
+html = """
+<html><head><title>The Dormouse's story</title></head>"""
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.head.title)
+print(type(soup.head.title))
+print(soup.head.title.string)
+
+
+# 关联选择
+html = """
+<html>
+    <head>
+        <title>The Dormouse's story</title>
+    </head>
+    <body>
+        <p class="story">
+            Once upon a time there were three little sisters; and their names were
+            <a href="http://example.com/elsie" class="sister" id="link1"
+                <span>Elsie</span>
+            </a>
+            <a href="http://example.com/lacie" class=sister" id="link2">Lacie</a>
+            and
+            <a href="http://examole.com/tillie" class="sister" id="link3">Tillie</a>
+            and they lived at the bottom of a well.
+        </p>
+        <p class="story">...</p>
+"""
+# 子节点和子孙节点
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.p.contents)
+# 调用children属性得到响应的结果
+print(soup.p.children)
+for i, child in enumerate(soup.p.children):
+    print(i, child)
+# descendants得到所有的子孙节点
+print(soup.p.descendants)
+for i, child in enumerate(soup.p.descendants):
+    print(i, child)
+
+# 父节点和祖先节点
+html = """
+<html>
+    <head>
+        <title>The Dormouse's story</title>
+    </head>
+    <body>
+        <p class="story">
+            Once upon a time there were three little sisters; and their names were
+            <a href="http://example.com/elsie" class="sister" id="link1">
+                <span>Elsie</span>
+            </a>
+        </p>
+        <p class="story">...</p>
+"""
+# 如果要获取某个节点元素的父节点可以使用parent属性
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.a.parent)
+# 如果想获取所有祖先节点可以调用parents属性
+html = """
+<html>
+    <body>
+        <p class="story">
+            <a href="http://example.com/elseie" class="sister" id="link1">
+                <span>Elsie</span>
+            </a>
+        </p>
+"""
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(type(soup.a.parents))
+print(list(enumerate(soup.a.parents)))
+
+# 兄弟节点
+html = """
+<html>
+    <body>
+        <p class="story">
+            Once upon a time there were three little sisters; and their names were
+            <a href="http://example.com/elsie" class="sister" od="link1">
+                <span>Elsie</span>
+            </a>
+            Hello
+            <a href="http://example.com/lacie" class="sister" id="link2">Lacie</a>
+            and 
+            <a href="http://example.com/tillie" class"sister" id="link3">Tillie</a>
+            and they lived at the bottom of a well.
+        </p>
+"""
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print('Next Sibling', soup.a.next_sibling)
+print('Prev Sibling', soup.a.previous_sibling)
+print('Next Siblings', list(enumerate(soup.a.next_siblings)))
+print('Prev Siblings', list(enumerate(soup.a.previous_siblings)))
+
+# 提取信息
+html = """
+<html>
+    <body>
+        <p class="story">
+            Once upon a time there were three little sisters; and their names were
+            <a href="http://example.com/elsie" class="sister" id="link1">Bob</a><a href=
+            "http://example.com/lacie" class="sister" id="link2">Lacie</a>
+        </p>
+"""
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print('Next Sibling:')
+print(type(soup.a.next_sibling))
+print(soup.a.next_sibling)
+print(soup.a.next_sibling.string)
+print('Parent:')
+print(type(soup.a.parents))
+print(list(soup.a.parents)[0])
+print(list(soup.a.parents)[0].attrs['class'])
+
+
+# 方法选择器
+# find_all
+# find_all(name, attrs, recursive, txt, **kwargs)
+html = """
+<div class="panel">
+    <div class="panel-heading">
+        <h4>Hello</h4>
+    </div>
+    <div class="panel-body">
+        <ul class="list" id="list-1">
+            <li class="element">Foo</li>
+            <li class="element">Bar</li>
+            <li class="element">Jay</li>
+        </ul>
+        <ul class="list list-small" id="list-2">
+            <li class="element">Foo</li>
+            <li class="element">Bar</li>
+        </ul>
+    </div>
+</div>
+"""
+from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, "lxml")
+print(soup.find_all(name='ul'))
+print(type(soup.find_all(name='ul')[0]))
+# 遍历每个li节点，并获取它的文本内容
+for ul in soup.find_all(name="ul"):
+    print(ul.find_all(name='li'))
+    for li in ul.find_all(name='li'):
+        print(li.string)
+
+# attrs 根据传入属性进行查询
+html = """
+<div class='panel'>
+    <div class='panel-heading'>
+        <h4>Hello</h4>
+    </div>
+        <ul class='list' id='list-1' name='elements'>
+            <li class='element'>Foo</li>
+            <li class='element'>Bar</li>
+            <li class='element'>Jay</li>
+        </ul>
+        <ul class='list list-small' id="list-2">
+            <li class='element'>Foo</li>
+            <li class='element'>Bar</li>
+        </ul>
+    </div>
+</div>
+"""
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.find_all(attrs={'id': 'list-1'}))
+print(soup.find_all(attrs={'name': 'elements'}))
+# 换一种参数写法都是可以的
+print(soup.find_all(id='list-1'))
+print(soup.find_all(class_='element'))
+
+
+# text
+import re
+html = '''
+<div class='panel'>
+    <div class='panel-body'>
+        <a>Hello, this is a link</a>
+        <a>Hello, this is a link, too</a>
+    </div>
+</div>
+'''
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.find_all(text=re.compile('link')))
+
+# find
+html = """
+<div class='panel'>
+    <div class='panel-heading'>
+        <h4>Hello</h4>
+    </div>
+        <ul class='list' id='list-1' name='elements'>
+            <li class='element'>Foo</li>
+            <li class='element'>Bar</li>
+            <li class='element'>Jay</li>
+        </ul>
+        <ul class='list list-small' id="list-2">
+            <li class='element'>Foo</li>
+            <li class='element'>Bar</li>
+        </ul>
+    </div>
+</div>
+"""
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.find(name='ul'))
+print(type(soup.find(name='ul')))
+print(soup.find(class_='list'))
+
+
+# CSS选择器
+html = """
+<div class='panel'>
+    <div class='panel-heading'>
+        <h4>Hello</h4>
+    </div>
+        <ul class='list' id='list-1' name='elements'>
+            <li class='element'>Foo</li>
+            <li class='element'>Bar</li>
+            <li class='element'>Jay</li>
+        </ul>
+        <ul class='list list-small' id="list-2">
+            <li class='element'>Foo</li>
+            <li class='element'>Bar</li>
+        </ul>
+    </div>
+</div>
+"""
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+print(soup.select('.panel .panel-heading'))
+print(soup.select('ul li'))
+print(soup.select('#list-2 .element'))
+print(type(soup.select('ul')[0]))
+# 嵌套选择
+# from bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+for ul in soup.select('ul'):
+    print(ul.select('li'))
+# 获取属性
+# form bs4 import BeautifulSoup
+soup = BeautifulSoup(html, 'lxml')
+for ul in soup.select('ul'):
+    print(ul["id"])
+    print(ul.attrs['id'])
+# 获取文本'
+# from bs4 import BeautufulSoup
+soup = BeautifulSoup(html, 'lxml')
+for li in soup.select('li'):
+    print('Get Text:', li.get_text())
+    print('String:', li.string)
+
+
+# pyquery的使用
+# 1.按装  pip3 install pyquery
+# 2。初始化
+# html `= '''
+# <div>
+#     <ul>
+#         <li class='item-0'>first item</li>
+#         <li class='item-1'><a href='link2.html'>second item</a></li>
+#         <li class='item-0 active'><a href='link3.html'><span class='bold'>third item</span></a></li>
+#         <li class='item-1 active'><a href='link4.html'>fourth item</a></li>
+#         <li class='item-0'><a href='link5.html'>fifth item</a></li>
+#     </ul>
+# </div>
+# '''
+# from pyquery import PyQuery as pq`
+# doc = pq(html)
+# print(doc('li'))
+# URL初始化
+# from pyquery import PyQuery as pq
+# doc = pq(url='https://cuiqingcai.com')
+# print(doc('title'))
+# 文件初始化
+# from pyquery import PyQuery as pq
+# import requests
+# doc = pq(requests.get('https://cuiqingcai.com').text)
+# print(doc('li'))
+
+# 基本CSS选择器
+html = '''
+<div id='container'>
+    <ul class='list'>
+        <li class='item-0'>first item</li>
+        <li class='item-1'><a href='link2.html'>second item</a></li>
+        <li class='item-0 active'><a href='link3.html'><span class='bold'>third item</span></a></li>
+        <li class='item-1 active'><a href='link4.html'>fourth item</a></li>
+        <li class='item-0'><a href='link5.html'>fifth item</a></li>
+    </ul>
+</div>
+'''
+from pyquery import PyQuery as pq
+doc = pq(html)
+print(doc('#container .list li'))
+print(type(doc('#container .list li')))
+# 直接通过遍历获取节点
+for item in doc('#container .list li').items():
+    print(item.text())
+
+# 查找节点
+# from pyquery import PyQuery as pq
+doc = pq(html)
+items = doc('.list')
+print(type(items))
+print(items)
+lis = items.find('li')  # find 方法查找所有子孙节点
+print(type(lis))
+print(lis)
+lis = items.children()  # children 查找子节点
+print(type(lis))
+print(lis)
+lis = items.children('.active')  # 筛选指定active节点
+print(lis)
+
+# 父节点(parent())
+container = items.parent()  # 可以通过parent查找节点的祖父节点, 首先要定义items的节点即：items = doc('list')
+print(type(container))
+print(container)
+
+# 兄弟节点（siblings）
+# from pyquery import PyQuery as pq
+doc = pq(html)
+li = doc('.list .item-0.active')
+print(li.siblings('.active'))
+# 遍历节点，如果是单节点可以直接打印，如果是多个节点就需要遍历获取了】
+doc = pq(html)
+lis = doc('li').items()
+print(type(lis))
+for li in lis:
+    print(li, type(li))
+
+# 获取属性（attr）
+a = doc('.item-0.active a')
+print(a, type(a))
+print(a.attr('href'))
+# 如果想要获取多个属性需要遍历
+doc = pq(html)
+a = doc('a')
+for item in a.items():
+    print(item.attr('href'))
+
+# 获取文本使用text方法实现,
+a = doc('.item-0.active a')
+print(a)
+print(a.text())
+# 如果想获取节点内部的html文本需要使用html方法
+print(a.html())
+# 如果选中的是多个节点，那么text和html返回的都是第一个节点的内容
+
+# 节点操作（addClass | removeClass）, 当
+doc = pq(html)
+li = doc('.item-0.active')
+print(li)
+li.remove_class('active')
+print(li)
+li.add_class('active')
+print(li)
+# 然也可以使用attr和text和html方法对属性进行操作
+html = '''
+<ul class='list'>
+    <li class='item-0 active'><a href='link3.html'><span class='bold'>third item</span></a></li>
+</ul>
+'''
+# from pyquery import PyQuery as pq
+doc = pq(html)
+li = doc('.item-0.active')
+print(li)
+li.attr('name', 'link')
+print(li)
+li.text('changed item')
+print(li)
+li.html('<span>changed item</span>')
+print(li)
+# remove
+html = """
+<div class='wrap'>
+    Hello, World
+    <p>This is a paragraph.
+</div>
+"""
+# from pyquery import PyQuery as pq
+doc = pq(html)
+wrap = doc('.wrap')     # Hello, World
+print(wrap.text())      # This is a paragraph.
+wrap.find('p').remove()
+print(wrap.text())      # Hello, World
+
+# 伪类选择器
+html = '''
+<div class='wrap'>
+    <div id='container'>
+        <ul class='list'>
+            <li class='item-0'>first item</li>
+            <li class='item-1'><a href=link2.html'>second item</a></li>
+            <li class='item-0' active><a href='link3.html'><span class='bold'>third item</span></a></li>
+            <li class='item-1' active><a href='link4.htnl'><fourth item</a></li>
+            <li class='item-0><a href='link5.html'>fifth item</a></li>
+        </ul>
+    </div>
+</div>
+'''
+# from pyquery import PyQuery as pq
+doc = pq(html)
+li = doc('li:first-child')
+print(li)
+li = doc('li:last-child')
+print(li)
+li = doc('li:nth-child(2)')
+print(li)
+li = doc('li:gt(2)')
+print(li)
+li = doc('li:nth-child(2n)')
+print(li)
+li = doc('li:contains(second)')
+print(li)
+
+
+# parsel的使用
+html = '''
+<div>
+    <ul>
+        <li class='item-0'>first item</li>
+        <li class='item-1'><a href='link2.html'>second item</a></li>
+        <li class='item-0' active><a href='link3.html'><span class='bold'>third item</span></a></li>
+        <li class='item-1' active><a href='link4.html'><fourth item</a></li>
+        <li class='item-0'><a href='link5.html'>fifth item</a></li>
+    </ul>
+</div>
+    '''
+from parsel import Selector
+# 声明Selector对象
+selector = Selector(text=html)
+items = selector.css('.item-0')
+print(len(items), type(items), items)
+items2 = selector.xpath('//li[contains(@class, "tem-0")]')
+print(len(items2), type(items), items2)
+
+# 提取文本
+# from parsel import Selector
+selector = Selector(text=html)
+items = selector.css('.item-0')
+for item in items:
+    text = item.xpath('.//text()').get()
+    print(text)
+
+# 提取属性
+# from parsel import Selector
+# selector = Selector(text=html)
+result = selector.css('.item-0.active a::attr(href)').get()
+print(result)
+result = selector.xpath('//li[contains(@class, "item-0") and contains(@class, "active")]/a/@href').get()
+print(result)
+
+# 正则提取
+# from parsel import Selector
+selector = Selector(text=html)
+result = selector.css('.item-0 *::text').re('.*item')  # 调用Css方法
+print(result)
+
+# from parsel import Selector
+selector = Selector(text=html)
+result = selector.css('.item-0').re_first('<span class="bold">(.*?)</span>')
+print(result)
